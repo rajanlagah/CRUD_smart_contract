@@ -4,14 +4,23 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title></title>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.4-rc.0/web3.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.3/web3.min.js"></script>
 </head>
 <body>
 	<div>
 		<label for='username'>
-			<input id='username' value="name" />
+			<input id='username-input' placeholder="name" />
 		</label>
 		<button id='add-user-btn'>Add User</button>
+	</div>
+	<div>
+		<label for='user-index'>
+			<input id='user-index' type="number" />
+		</label>
+		<button id='get-user-by-index-btn'>Get User</button>
+	</div>
+	<div>
+		<button id='getAll-user-btn'>Get All Users</button>
 	</div>
 	<script type="text/javascript" src="index.js"  ></script>
 </body>

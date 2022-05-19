@@ -32,9 +32,10 @@ contract CRUD {
     }
 
     // add
-    function addUser(string memory _name) public {
+    function addUser(string memory _name) public returns(uint){
         users.push(User(maxId,_name));
         maxId++;
+        return users.length;
     }
     
     // update

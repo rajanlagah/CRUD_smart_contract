@@ -102,7 +102,13 @@ const ABI = [
         }
       ],
       "name": "addUser",
-      "outputs": [],
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
       "stateMutability": "nonpayable",
       "type": "function"
     },
@@ -138,32 +144,38 @@ const ABI = [
       "type": "function"
     }
   ]
-const ADDRESS = "0xf5d7752BB43d55033cD03EB14C617F4589500F4b"
+const ADDRESS = "0xB60A9A9f2dCb050da8Cc10Cd4aa354d06ca53eeb"
+let accounts = []
 
 const addUserBtn = document.getElementById('add-user-btn')
+const getAllUserBtn = document.getElementById('getAll-user-btn')
+const getUserBtn = document.getElementById('get-user-by-index-btn')
+const usernameInput = document.getElementById('username-input')
+const userIndex = document.getElementById('user-index')
 
 const initWeb3 = () => {
+  console.log(window)
+	return new Promise((resolve, reject) => {
+    if(typeof window.ethereum !== 'undefined') {
+      const web3 = new window.Web3(window.ethereum);
+      window.ethereum.enable()
+        .then(() => {
+          resolve(
+            new window.Web3(window.ethereum)
+          );
+        })
+        .catch(e => {
+          reject(e);
+        });
+      return;
+    }
+    if(typeof window.Web3 !== 'undefined') {
+      return resolve(
+        new Web3(window.web3.currentProvider)
+      );
+    }
 
-	return new Promise((res,rej) => {
-		if(typeof window.ethereum !== "undefined"){
-			const web3 = new Web3(window.ethereum)
-
-			window.ethereum.enable()
-				.then(()=>{
-					res(new Web3(window.ethereum))
-				})
-				.catch( e => {
-					rej(e)
-				})
-				return
-		}
-		if(typeof window.web3 !== 'undefined'){
-			return res(
-					new Web3(window.web3.currentProvider)
-				)
-		}
-
-		res(new Web3('http://127.0.0.1:7545'))
+		resolve(new Web3('http://127.0.0.1:7545'))
 	})
 }
 
@@ -173,28 +185,55 @@ const initContract = () => {
 			ADDRESS
 		)
 }
+const getSetAccounts = () => {
+  web3.eth.getAccounts()
+    .then( _accounts => {
+      accounts = _accounts
+      initApp()
+    })
+}
 
 const initApp = () => {
 	console.log("APP INITED")
 	console.log(crud)
-	crud.methods.addUser('RAJAN')
-  .send({from: "e49b2b5be2dfcdda9cd345351a8321de509a2a7a92c151b09774ed8ef904929d"})
-		.then( res => {
-			console.log("res",res)
-		})
-		.catch(e => console.log(e))
-	
-
-
-
 }
 
-addUserBtn.addEventListener('click',()=>{
-	console.log("clicked")
-	crud.methods.getAll().call()
+getAllUserBtn.addEventListener('click',(e)=>{
+	e.preventDefault()
+	crud.methods.getAll()
+    .send({from: accounts[0]})
 		.then( res => console.log("res",res))
-		.catch(e => console.log("error",e))
+		.catch(e => console.log("error",e.message))
 })
+
+addUserBtn.addEventListener('click',async (e)=>{
+  e.preventDefault()
+  
+  const inputUserName = usernameInput.value
+  console.log(inputUserName)
+  console.log(accounts)
+  console.log(await web3.eth.getBalance(accounts[0]))
+  crud.methods.addUser(inputUserName)
+  .send({from: accounts[0]})
+    .then( res => {
+      console.log("res",res)
+    })
+    .catch(e => console.log(e.message))
+})
+
+getUserBtn.addEventListener('click',(e)=>{
+  e.preventDefault()
+  
+  const index = userIndex.value
+  console.log(index)
+
+  crud.methods.getUser(index).call()
+    .then( res => {
+      console.log("res",res[0])
+    })
+    .catch(e => console.log(e))
+})
+
 
 document.addEventListener('DOMContentLoaded', () => {
   initWeb3()
@@ -202,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
       console.log("HERE")
       web3 = _web3;
       crud = initContract();
-      initApp(); 
+      getSetAccounts(); 
     })
     .catch(e => console.log(e.message));
 });
