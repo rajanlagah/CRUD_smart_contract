@@ -144,7 +144,7 @@ const ABI = [
       "type": "function"
     }
   ]
-const ADDRESS = "0xB60A9A9f2dCb050da8Cc10Cd4aa354d06ca53eeb"
+const ADDRESS = "0xBAabc4233c67D19A10063A1c09dc38206ABfbAC1"
 let accounts = []
 
 const addUserBtn = document.getElementById('add-user-btn')
@@ -169,7 +169,7 @@ const initWeb3 = () => {
         });
       return;
     }
-    if(typeof window.Web3 !== 'undefined') {
+    if(typeof window.web3 !== 'undefined') {
       return resolve(
         new Web3(window.web3.currentProvider)
       );
@@ -214,7 +214,12 @@ addUserBtn.addEventListener('click',async (e)=>{
   console.log(accounts)
   console.log(await web3.eth.getBalance(accounts[0]))
   crud.methods.addUser(inputUserName)
-  .send({from: accounts[0]})
+  .send({
+      from: accounts[0],
+      gas: 3000000,
+      gasPrice: window.web3.utils.toWei('10', 'gwei')
+
+  })
     .then( res => {
       console.log("res",res)
     })
@@ -227,9 +232,15 @@ getUserBtn.addEventListener('click',(e)=>{
   const index = userIndex.value
   console.log(index)
 
-  crud.methods.getUser(index).call()
+  crud.methods.getUser(1)
+  .send({
+      from: accounts[0],
+      gas: 3000000,
+      gasPrice: window.web3.utils.toWei('10', 'gwei')
+
+  })
     .then( res => {
-      console.log("res",res[0])
+      console.log("res",res)
     })
     .catch(e => console.log(e))
 })

@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity ^0.5.10;
 
 contract CRUD {
  uint public maxId = 1; // because if we delete 0th element from array then getUserIndex will return index 0 as default for users[0].id will be set 0
@@ -27,8 +27,16 @@ contract CRUD {
         return (users[userIndex].id,users[userIndex].name);
     }
    // get all user 
-    function getAll() view public returns(User[] memory){
-        return users;
+    // function getAll() view public returns(User[] memory){
+    //     return users;
+    // }
+
+    function sayHi() public returns(uint){
+
+        users.push(User(maxId,"RAJAN"));
+        maxId++;
+        return users.length;
+        // return users.length;
     }
 
     // add
